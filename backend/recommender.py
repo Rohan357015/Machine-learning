@@ -1,7 +1,13 @@
 import pickle
+from pathlib import Path
 
-movies = pickle.load(open("movies.pkl", "rb"))
-similarity = pickle.load(open("similarity.pkl", "rb"))
+BASE_DIR = Path(__file__).resolve().parent
+
+with open(BASE_DIR / "movies.pkl", "rb") as movies_file:
+    movies = pickle.load(movies_file)
+
+with open(BASE_DIR / "similarity.pkl", "rb") as similarity_file:
+    similarity = pickle.load(similarity_file)
 
 def recommend(movie):
     movie = movie.strip().lower()
