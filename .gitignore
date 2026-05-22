@@ -28,6 +28,8 @@ __pycache__/
 # Ignore generated model artifacts by default.
 *.joblib
 *.pkl
+!backend/movies.pkl
+!backend/similarity.pkl
 
 # Editor directories and files
 .vscode/*
