@@ -1,15 +1,21 @@
 import pickle
+from functools import lru_cache
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
 
-with open(BASE_DIR / "movies.pkl", "rb") as movies_file:
-    movies = pickle.load(movies_file)
+@lru_cache(maxsize=1)
+def load_model():
+    with open(BASE_DIR / "movies.pkl", "rb") as movies_file:
+        movies = pickle.load(movies_file)
 
-with open(BASE_DIR / "similarity.pkl", "rb") as similarity_file:
-    similarity = pickle.load(similarity_file)
+    with open(BASE_DIR / "similarity.pkl", "rb") as similarity_file:
+        similarity = pickle.load(similarity_file)
+
+    return movies, similarity
 
 def recommend(movie):
+    movies, similarity = load_model()
     movie = movie.strip().lower()
 
     # Case-insensitive + safe matching

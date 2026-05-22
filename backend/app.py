@@ -19,6 +19,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/")
+def read_root():
+    return {"status": "ok"}
+
 @app.get("/recommend")
 def get_recommend(movie: str):
     return {"movies": recommend(movie)}
