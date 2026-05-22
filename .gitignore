@@ -12,22 +12,21 @@ dist
 dist-ssr
 *.local
 venv/
-.env/
+.env
+.env.*
+!.env.example
+!frontend/.env.example
+!backend/.env.example
 .env.*.local
-*.pkl
-
-# Ignore ML model files
-*.pkl
-*.joblib
-echo backend/similarity.pkl >> .gitignore
-!backend/movies.pkl
-!backend/similarity.pkl
 
 # Ignore virtual environment
 venv/
 
 # Python cache
 __pycache__/
+
+# Ignore generated model artifacts by default.
+*.joblib
 
 
 # Editor directories and files
