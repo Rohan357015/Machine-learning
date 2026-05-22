@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from recommender import recommend
 
 app = FastAPI()
@@ -17,4 +18,10 @@ def read_root():
 
 @app.get("/recommend")
 def get_recommend(movie: str):
-    return {"movies": recommend(movie)}
+    try:
+        return {"movies": recommend(movie)}
+    except Exception as exc:
+        return JSONResponse(
+            status_code=500,
+            content={"error": "Recommendation model failed to load or run.", "detail": str(exc)},
+        )
