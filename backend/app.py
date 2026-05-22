@@ -1,23 +1,12 @@
-import os
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from recommender import recommend
 
-frontend_urls = [
-    url.strip()
-    for url in os.getenv(
-        "FRONTEND_URLS",
-        "http://localhost:5173,http://127.0.0.1:5173,https://movie-self-nu.vercel.app",
-    ).split(",")
-    if url.strip()
-]
-
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=frontend_urls,
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
