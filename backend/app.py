@@ -6,7 +6,7 @@ from recommender import recommend
 
 frontend_urls = [
     url.strip()
-    for url in os.getenv("https://movie-self-nu.vercel.app/", "http://localhost:5173,http://127.0.0.1:5173").split(",")
+    for url in os.getenv("FRONTEND_URLS", "http://localhost:5173,http://127.0.0.1:5173").split(",")
     if url.strip()
 ]
 

@@ -19,6 +19,7 @@ venv/
 # Ignore ML model files
 *.pkl
 *.joblib
+echo backend/similarity.pkl >> .gitignore
 !backend/movies.pkl
 !backend/similarity.pkl
 
