@@ -1,6 +1,7 @@
-venv/
-__pycache__/
-*.log
-*.err.log
-recomender.ipynb
-dataSet/
+backend/dataSet/
+backend/recomender.ipynb
+backend/*.ipynb
+*.ipynb
+*.pkl
+*.parquet
+*.csv
