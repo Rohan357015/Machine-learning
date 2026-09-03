@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Film, LoaderCircle, Search } from "lucide-react";
+import { Film, LoaderCircle, Search, ShieldAlert, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 function HeroPage() {
@@ -7,6 +7,7 @@ function HeroPage() {
   const [movieCards, setMovieCards] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [showVpnPopup, setShowVpnPopup] = useState(true);
 
   const navigate = useNavigate();
   const apiUrl = (import.meta.env.VITE_API_URL || "http://127.0.0.1:8000").replace(/\/+$/, "");
@@ -47,41 +48,20 @@ function HeroPage() {
       const results = await Promise.all(
         recommendedMovies.map(async (title) => {
           try {
-            const tmdbRes = await fetch(
-              `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(title)}`,
-              {
-                headers: {
-                  Authorization: "Bearer " + import.meta.env.VITE_TMDB_TOKEN,
-                },
-              }
+            const movieRes = await fetch(
+              `${apiUrl}/movie-search?title=${encodeURIComponent(title)}`
             );
 
-            if (!tmdbRes.ok) return null;
+            if (!movieRes.ok) return { id: null, title, poster: null };
 
-            const tmdbData = await tmdbRes.json();
-            const movie = tmdbData.results?.[0];
-
-            if (!movie || !movie.poster_path) return null;
-
-            return {
-              id: movie.id,
-              title: movie.title,
-              poster: "https://image.tmdb.org/t/p/w500" + movie.poster_path,
-            };
+            return await movieRes.json();
           } catch {
-            return null;
+            return { id: null, title, poster: null };
           }
         })
       );
 
-      const validResults = results.filter(Boolean);
-
-      if (validResults.length === 0) {
-        setErrorMessage("Recommendations found, but movie posters could not be loaded.");
-        return;
-      }
-
-      setMovieCards(validResults);
+      setMovieCards(results);
     } catch {
       setErrorMessage("Something went wrong. Please check the backend and try again.");
     } finally {
@@ -90,11 +70,38 @@ function HeroPage() {
   };
 
   const handleSelectMovie = (movieId) => {
+    if (!movieId) return;
+
     navigate(`/movie/${movieId}`);
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-black via-neutral-900 to-black text-white px-6">
+      {showVpnPopup && (
+        <div className="fixed right-4 top-4 z-50 max-w-sm rounded-lg border border-red-500/40 bg-neutral-950 px-4 py-3 shadow-2xl">
+          <div className="flex items-start gap-3">
+            <ShieldAlert className="mt-0.5 shrink-0 text-red-500" size={22} />
+
+            <div className="pr-6">
+              <h2 className="text-sm font-semibold text-white">
+                Use VPN for this app
+              </h2>
+              <p className="mt-1 text-sm leading-relaxed text-gray-300">
+                Movie posters and details need TMDB access, which may be blocked on some networks.
+              </p>
+            </div>
+
+            <button
+              onClick={() => setShowVpnPopup(false)}
+              className="absolute right-3 top-3 text-gray-400 transition hover:text-white"
+              aria-label="Close VPN message"
+            >
+              <X size={18} />
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="text-center pt-14">
         <h1 className="text-4xl md:text-5xl font-extrabold">
           <span className="text-red-500">Movie</span> Recommendation
@@ -154,15 +161,23 @@ function HeroPage() {
       <div className="mt-10 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 mb-20">
         {movieCards.map((movie) => (
           <div
-            key={movie.id}
-            className="group relative rounded-xl overflow-hidden shadow-lg cursor-pointer hover:scale-105 transition-transform duration-300"
+            key={movie.id || movie.title}
+            className={`group relative overflow-hidden rounded-xl shadow-lg transition-transform duration-300 ${
+              movie.id ? "cursor-pointer hover:scale-105" : "cursor-default"
+            }`}
             onClick={() => handleSelectMovie(movie.id)}
           >
-            <img
-              src={movie.poster}
-              alt={movie.title}
-              className="w-full aspect-[2/3] object-cover object-top"
-            />
+            {movie.poster ? (
+              <img
+                src={movie.poster}
+                alt={movie.title}
+                className="w-full aspect-[2/3] object-cover object-top"
+              />
+            ) : (
+              <div className="flex aspect-[2/3] w-full items-center justify-center bg-neutral-800 p-4 text-center text-sm text-gray-300">
+                Poster unavailable
+              </div>
+            )}
 
             <p className="absolute bottom-3 left-3 right-3 text-sm font-semibold">
               {movie.title}
