@@ -29,10 +29,16 @@ def load_env_file():
 
 load_env_file()
 
+allowed_origins = [
+    origin.strip()
+    for origin in os.getenv("FRONTEND_URLS", "http://localhost:5173").split(",")
+    if origin.strip()
+]
+
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
