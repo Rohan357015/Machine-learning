@@ -1,4 +1,4 @@
-# Movie Recommender API
+﻿# Movie Recommender API
 
 FastAPI service for movie recommendations and TMDB-backed movie details. The Render Blueprint is in the repository root at `render.yaml`.
 
@@ -19,14 +19,15 @@ Deploy the frontend separately. Set its build-time environment variable `VITE_AP
 
 ## Run Locally
 
-From the repository root:
+Use the installed Python 3.13 environment. The dependency ranges in `requirements.txt` include prebuilt wheels for Python 3.13, so a C/C++ compiler is not needed.
 
 ```powershell
 cd backend
-py -3.12 -m venv .venv
-.\.venv\Scripts\Activate.ps1
+py -3.13 -m venv venv
+.\venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 python -m uvicorn app:app --reload
 ```
 
-The API is available at `http://127.0.0.1:8000`. Set `TMDB_TOKEN` and `FRONTEND_URLS` in the environment or in `backend/.env` when needed. `backend/.env` is for local use only and should not be committed.
+The API is available at `http://127.0.0.1:8000`, with Swagger docs at `http://127.0.0.1:8000/docs`. Set `TMDB_TOKEN` and `FRONTEND_URLS` in the environment or in `backend/.env` when needed. `backend/.env` is for local use only and should not be committed.
